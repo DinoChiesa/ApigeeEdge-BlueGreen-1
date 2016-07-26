@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+  <Description>the default proxy endpoint</Description>
+  <HTTPProxyConnection>
+    <BasePath>/bluegreen</BasePath>
+<!--
+    <VirtualHost>default</VirtualHost>
+-->
+    <VirtualHost>secure</VirtualHost>
+  </HTTPProxyConnection>
+
+  <PreFlow name="PreFlow">
+    <Request/>
+    <Response/>
+  </PreFlow>
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response>
+      <Step><Name>AM-CleanResponseHeaders</Name></Step>
+    </Response>
+  </PostFlow>
+
+
+  <FaultRules/>
+
+  <Flows>
+    <Flow name='filter out invalid requests'>
+      <Request>
+        <Step><Name>RF-BadRequest</Name></Step>
+      </Request>
+      <Response>
+      </Response>
+      <Condition>request.verb != "GET"</Condition>
+    </Flow>
+
+    <Flow name='default request'>
+      <Request>
+        <Step><Name>CacheLookup-TargetWeights</Name></Step>
+        <Step>
+          <Name>SC-GetDesiredWeights</Name>
+          <Condition>cached_targetweights = null</Condition>
+        </Step>
+        <Step>
+          <Name>CacheInsert-TargetWeights</Name>
+          <Condition>cached_targetweights = null</Condition>
+        </Step>
+        <Step>
+          <Name>CacheLookup-TargetWeights</Name>
+          <Condition>cached_targetweights = null</Condition>
+        </Step>
+        <Step><Name>JS-SelectTarget</Name></Step>
+      </Request>
+      <Response>
+        <Step><Name>AM-Response</Name></Step>
+      </Response>
+    </Flow>
+
+  </Flows>
+
+  <RouteRule name="no-target-route"/>
+</ProxyEndpoint>

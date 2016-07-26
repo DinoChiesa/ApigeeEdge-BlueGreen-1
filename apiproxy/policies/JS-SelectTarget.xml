@@ -1,0 +1,7 @@
+<Javascript name='JS-SelectTarget' timeLimit='200' >
+  <Properties>
+    <Property name='weightsResponse'>cached_targetweights</Property>
+  </Properties>
+  <IncludeURL>jsc://weightedRandomSelector.js</IncludeURL>
+  <ResourceURL>jsc://selectTarget.js</ResourceURL>
+</Javascript>

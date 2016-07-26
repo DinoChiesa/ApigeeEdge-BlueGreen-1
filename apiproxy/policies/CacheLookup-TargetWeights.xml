@@ -1,0 +1,9 @@
+<LookupCache name='CacheLookup-TargetWeights'>
+  <CacheResource>cache1</CacheResource>
+  <AssignTo>cached_targetweights</AssignTo> <!-- name of flow variable -->
+  <Scope>Application</Scope>
+  <CacheKey>
+    <Prefix>weights</Prefix>
+    <KeyFragment>{apiproxy.name}</KeyFragment>
+  </CacheKey>
+</LookupCache>

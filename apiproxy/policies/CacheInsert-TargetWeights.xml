@@ -1,0 +1,12 @@
+<PopulateCache name='CacheInsert-TargetWeights'>
+  <CacheResource>cache1</CacheResource>
+  <Source>weightsReply.content</Source>
+  <Scope>Application</Scope>
+  <CacheKey>
+    <Prefix>weights</Prefix>
+    <KeyFragment>{apiproxy.name}</KeyFragment>
+  </CacheKey>
+  <ExpirySettings>
+    <TimeoutInSec>10</TimeoutInSec>
+  </ExpirySettings>
+</PopulateCache>
