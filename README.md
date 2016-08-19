@@ -34,22 +34,53 @@ There's nothing really exotic going on here. The key pieces of the system are:
 
 - Some Javascript logic that applies a weighted-random selection to that list. 
 
-The proxy caches the list of tuples for 10 seconds. This means weights get adjusted on
-that interval. Decreasing the TTL of the cache means the proxy will read the list more
-often, and change more dyamically.  Since the weights are retrieved synchronously with
-respect to a request, this will have an time impact on one of the requests within the
-TTL window. If you adjust the TTL to a higher value - say 60 seconds - then the changes
-will be detected more slowly, and the time impact to reload the cache occurs less
-frequently.
+The proxy caches the list of tuples for 10 seconds. This means the routing behavior will
+change based on new settings, only every ten seconds.
+
+Why? Well think about it: you have hundreds or thousands of requests flowing through the
+system in any one second. Obviously you do not need to retrieve the weights of the
+targets, for each request. So the proxy uses a cache.
+
+
+Of course you can adjust the cache lifetime (TTL) number. The question is, how often
+will your administrators change the settings, and how quickly do the admins need those
+changes to be reflected in the actual routing behavior?
+
+
+Decreasing the TTL of the cache means the proxy will read the list more often, and will
+change its routing behavior more quickly in response to administrator changes in the
+settings.  The weights are retrieved synchronously with respect to a request, which
+means cache refresh will have a time impact on one of the requests within the TTL
+window. If you adjust the TTL to a higher value - say 60 seconds - then the changes will
+be detected more slowly, and the time impact to reload the cache occurs less frequently.
+
+
+## Why not use the TargetServer?
+
+Apigee Edge already has [a TargetServer
+construct](http://docs.apigee.com/api-services/content/load-balancing-across-backend-servers) which
+can do [weighted round-robin load
+balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html),
+so why is this proxy interesting?  The key reason is: using TargetServer, changing the weights of
+the targets requires a new deployment of the API Proxy. This is not always desirable or
+practical. Really I hink of the list of targets and weights as *data*, not cproxy operation
+configuration. So I Want that to be dynamnic, while the proxy remains static.
 
 
 ## Possible Enhancements
 
-A simple enhancement would be to refresh the cache of {target, weight} tuples asynchronously with respect to any request.
-That ought to be easy to do, using Nodejs. You could use the same Weighted Random Selector object in Javascript.  Just use setTimeout() to
-refresh the cache periodically. 
+A simple enhancement would be to refresh the cache of {target, weight} tuples
+asynchronously with respect to any request.  That ought to be easy to do, using
+Nodejs. You could use the same Weighted Random Selector object in Javascript.  Just use
+setTimeout() to refresh the cache periodically.
 
-But I think of this as a YAGNI thing. It might be nice to have, but you probably aren't gonna need it. 
+But I think of this as a YAGNI thing. It might be nice to have, but you probably aren't
+gonna need it.
+
+## License
+
+This example and all its code and configuration is licensed under [the Apache 2.0 source
+license](LICENSE).
 
 
 ## Notes
