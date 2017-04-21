@@ -29,10 +29,19 @@ There's nothing really exotic going on here. The key pieces of the system are:
   targets.  If you want the weights to all be the same - so that all targets get an
   equal share of the load, no problem. This list must be accessible to the API Proxy.
   Putting it into a usergrid / BaaS collection is a great way to do that. It doesn't
-  have to be usergrid, though. It could be a Key-Value Map, or it could be some other
-  external service or registry.  All we need is a list of tuples of {target, weight}.
+  have to be usergrid, though. Another good options is a Key-Value Map. Or, it could be some other
+  external service or registry. All we need is a list of tuples of {target, weight}. 
 
-- Some Javascript logic that applies a weighted-random selection to that list. 
+- Some JavaScript logic that applies a weighted-random selection to that list. The JavaScript
+  expects the weights to be expressed as an array of arrays in JSON:
+
+  ```
+  { "values" : [[ "target1", 10 ], [ "target2", 65 ],[ "target3", 37 ]] }
+  ```
+
+  Each inner array item is a pair of a target name and a relative weight. The weights do
+  not need to sum to any particular value. The weight assigned to an option is W(option)/sum(Weights) .
+  So for the above example, the weight for target1 is 10/(10+65+37) = 0.089 .
 
 The proxy caches the list of tuples for 10 seconds. This means the routing behavior will
 change based on new settings, only every ten seconds.
