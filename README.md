@@ -60,11 +60,12 @@ be detected more slowly, and the time impact to reload the cache occurs less fre
 Apigee Edge already has [a TargetServer
 construct](http://docs.apigee.com/api-services/content/load-balancing-across-backend-servers) which
 can do [weighted round-robin load
-balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html),
-so why is this proxy interesting?  The key reason is: using TargetServer, changing the weights of
-the targets requires a new deployment of the API Proxy. This is not always desirable or
-practical. Really I hink of the list of targets and weights as *data*, not cproxy operation
-configuration. So I Want that to be dynamnic, while the proxy remains static.
+balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html).
+
+Given that feature, why is this proxy interesting? The key reason is: using TargetServer, changing the weights of
+the targets requires a new deployment of the API Proxy. Changing the list of target servers requires a new deployment of the API Proxy. This is not always desirable or
+practical. I think of the list of targets and weights as *data*, not proxy operation
+configuration. So I want that to be dynamic, while the proxy remains static.
 
 
 ## Possible Enhancements
