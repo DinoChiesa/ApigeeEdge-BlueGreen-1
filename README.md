@@ -1,7 +1,7 @@
 # Apigee Edge enables Blue/Green routing
 
-This is an example API proxy that shoes how to distribute load to multiple back end systems, based on
-a weighted-random selection algorithm.
+This is an example API proxy that shoes how to distribute load to multiple back end
+systems, based on a weighted-random selection algorithm.
 
 This technique is sometimes called a "blue/green" deployment. The idea is described in
 some detail
@@ -29,8 +29,9 @@ There's nothing really exotic going on here. The key pieces of the system are:
   targets.  If you want the weights to all be the same - so that all targets get an
   equal share of the load, no problem. This list must be accessible to the API Proxy.
   Putting it into a usergrid / BaaS collection is a great way to do that. It doesn't
-  have to be usergrid, though. Another good options is a Key-Value Map. Or, it could be some other
-  external service or registry. All we need is a list of tuples of {target, weight}. 
+  have to be usergrid, though. Another good options is a Key-Value Map. Or, it could be
+  some other external service or registry. All we need is a list of tuples of {target,
+  weight}.
 
 - Some JavaScript logic that applies a weighted-random selection to that list. The JavaScript
   expects the weights to be expressed as an array of arrays in JSON:
@@ -40,8 +41,9 @@ There's nothing really exotic going on here. The key pieces of the system are:
   ```
 
   Each inner array item is a pair of a target name and a relative weight. The weights do
-  not need to sum to any particular value. The weight assigned to an option is W(option)/sum(Weights) .
-  So for the above example, the weight for target1 is 10/(10+65+37) = 0.089 .
+  not need to sum to any particular value. The weight assigned to an option is
+  W(option)/sum(Weights) .  So for the above example, the weight for target1 is
+  10/(10+65+37) = 0.089 .
 
 The proxy caches the list of tuples for 10 seconds. This means the routing behavior will
 change based on new settings, only every ten seconds.
@@ -79,13 +81,27 @@ configuration. So I want that to be dynamic, while the proxy remains static.
 
 ## Possible Enhancements
 
-A simple enhancement would be to refresh the cache of {target, weight} tuples
-asynchronously with respect to any request.  That ought to be easy to do, using
-Nodejs. You could use the same Weighted Random Selector object in Javascript.  Just use
-setTimeout() to refresh the cache periodically.
+1. Use Java
 
-But I think of this as a YAGNI thing. It might be nice to have, but you probably aren't
-gonna need it.
+   This is a functional proof of concept. It will perform well at
+   reasonable load.  For every request, there are a few custom objects
+   created in the JavaScript callout, including the Weighted Random
+   Selector callout, which uses a Gaussian object.
+
+   This could be optimized with the caching of the WRS and the Gaussian.
+   The way to do this is via a Java callout, which can use a
+   LoadingCache from Guava which will persist and be used by multiple
+   concurrent requests.
+
+2. An additional enhancement might be to refresh the cache of {target, weight} tuples
+   asynchronously with respect to any request. Currently this proxy loads the weights data
+   synchronously with respect to a request, when the cache times out. One request will
+   incur the cost of loading. Making it asynchronous makes it fairer. 
+
+   That ought to be easy to do, using a separate proxy with a Nodejs
+   target.  But I think of this as a YAGNI thing. It might be nice to
+   have, but you probably aren't gonna need it.
+
 
 ## License
 
@@ -100,7 +116,9 @@ loopback proxy, which responds without connecting to anything on the backend. Ra
 than demonstrate actual load balancing, which would be a little complicated, what this
 proxy does is demonstrate how to perform the weighted random selection of a target.
 
-You should think of this as just a building block.  It will compose nicely with Token verification, caching, quota enforcement, and even Shared Flows. 
+You should think of this as just a building block.  It will compose
+nicely with Token verification, caching, quota enforcement, and even
+Shared Flows.
 
 
 To actually do weighted load balancing, you'd need to follow that up with:
