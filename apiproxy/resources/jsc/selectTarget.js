@@ -2,17 +2,26 @@
 // ------------------------------------------------------------------
 //
 // created: Wed Jan 13 12:12:56 2016
-// last saved: <2016-June-08 12:31:47>
+// last saved: <2017-April-21 15:32:53>
 
-if ('' + properties.weightsResponse != "undefined") {
-  // retrieve weights, from BaaS
-  var weightsResponse = context.getVariable(properties.weightsResponse);
-  weightsResponse = JSON.parse(weightsResponse);
-
-  if (weightsResponse.entities && weightsResponse.entities[0]) {
-    var entity = weightsResponse.entities[0];
-    var wrs = new WeightedRandomSelector(entity.values);
+function selectTarget(values) {
+    var wrs = new WeightedRandomSelector(values);
     var selected = wrs.select();
     context.setVariable('selectedTarget', selected[0]);
+}
+
+if ('' + properties.weights != "undefined") {
+  // retrieve weights
+  var weightsData = context.getVariable(properties.weights);
+  weightsData = JSON.parse(weightsData);
+
+  if (weightsData.entities && weightsData.entities[0]) {
+    // obtained from BaaS
+    var entity = weightsData.entities[0];
+    selectTarget(entity.values);
+  }
+  else if (weightsData.values){
+    // obtained from KVM
+    selectTarget(weightsData);
   }
 }

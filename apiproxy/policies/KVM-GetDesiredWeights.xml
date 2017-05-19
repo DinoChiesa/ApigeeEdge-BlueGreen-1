@@ -1,0 +1,15 @@
+<KeyValueMapOperations name='KVM-GetDesiredWeights' mapIdentifier='non-secrets'>
+  <Scope>environment</Scope>
+  <ExpiryTimeInSecs>10</ExpiryTimeInSecs>
+  <Get assignTo='weightsData' index='1'>
+    <Key>
+      <Parameter>targets-and-weights</Parameter>
+  <!--
+      The data should be like this:
+        {
+          "values" : [ [ "AAAAA", 50 ], [ "BBBBB", 30 ], [ "CCCCC", 10 ] ]
+        }
+  -->
+    </Key>
+  </Get>
+</KeyValueMapOperations>

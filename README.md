@@ -1,7 +1,7 @@
 # Apigee Edge enables Blue/Green routing
 
-This is an example API proxy that shoes how to distribute load to multiple back end systems, based on
-a weighted-random selection algorithm.
+This is an example API proxy that shoes how to distribute load to multiple back end
+systems, based on a weighted-random selection algorithm.
 
 This technique is sometimes called a "blue/green" deployment. The idea is described in
 some detail
@@ -29,10 +29,21 @@ There's nothing really exotic going on here. The key pieces of the system are:
   targets.  If you want the weights to all be the same - so that all targets get an
   equal share of the load, no problem. This list must be accessible to the API Proxy.
   Putting it into a usergrid / BaaS collection is a great way to do that. It doesn't
-  have to be usergrid, though. It could be a Key-Value Map, or it could be some other
-  external service or registry.  All we need is a list of tuples of {target, weight}.
+  have to be usergrid, though. Another good options is a Key-Value Map. Or, it could be
+  some other external service or registry. All we need is a list of tuples of {target,
+  weight}.
 
-- Some Javascript logic that applies a weighted-random selection to that list. 
+- Some JavaScript logic that applies a weighted-random selection to that list. The JavaScript
+  expects the weights to be expressed as an array of arrays in JSON:
+
+  ```
+  { "values" : [[ "target1", 10 ], [ "target2", 65 ],[ "target3", 37 ]] }
+  ```
+
+  Each inner array item is a pair of a target name and a relative weight. The weights do
+  not need to sum to any particular value. The weight assigned to an option is
+  W(option)/sum(Weights) .  So for the above example, the weight for target1 is
+  10/(10+65+37) = 0.089 .
 
 The proxy caches the list of tuples for 10 seconds. This means the routing behavior will
 change based on new settings, only every ten seconds.
@@ -63,24 +74,34 @@ can do [weighted round-robin load
 balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html),
 so why is this proxy interesting?  The key reason is: using TargetServer, changing the weights of
 the targets requires a new deployment of the API Proxy. This is not always desirable or
-practical. Really the list of targets and weights is *data*, not proxy operation
-configuration. So we want that to be dynamnic, while the proxy remains static.
+practical. The list of targets and weights is *data*, not proxy operation
+configuration. So we want that to be dynamic, while the proxy remains static.
 
 
 ## Possible Enhancements
 
-A simple enhancement would be to refresh the cache of {target, weight} tuples
-asynchronously with respect to any request. That ought to be easy to do, using
-Nodejs. You could use the same Weighted Random Selector object in Javascript.  Just use
-setTimeout() to refresh the cache periodically.
+1. Use Java
 
-But this may be a YAGNI thing. It might be nice to have, but you probably aren't
-gonna need it. The latency added by a synchronous, in-line lookup is single digit milliseconds.
+   This is a functional proof of concept. It will perform well at
+   reasonable load. For every request, there are a few custom objects
+   created in the JavaScript callout, including the Weighted Random
+   Selector callout, which uses a Gaussian object.
 
-Another enhancement would be to use a Java callout to persist the
-weighted random selector object in memory. This also would be faster but
-the JS currently consumes much less than 1ms, so there's not much benefit to pushing
-that to a faster mechanism.
+   This could be optimized with the caching of the WRS and the Gaussian.
+   The way to do this is via a Java callout, which can use a
+   LoadingCache from Guava which will persist and be used by multiple
+   concurrent requests. The current cost of the JS logic to select a target is much
+   less than 1ms. Therefore the possible performance gain from using Java is
+   low, unless the system is under very high load. 
+
+2. An additional enhancement might be to refresh the cache of {target, weight} tuples
+   asynchronously with respect to any request. Currently this proxy loads the weights data
+   synchronously with respect to a request, when the cache times out. One request will
+   incur the cost of loading. Making it asynchronous makes it fairer. 
+
+   That ought to be easy to do, using a separate proxy with a Nodejs
+   target.  But the cost of doing the KVM lookup is less than 10ms. It might be nice to
+   do it asynchronously, but you probably aren't gonna need it.
 
 ## License
 
