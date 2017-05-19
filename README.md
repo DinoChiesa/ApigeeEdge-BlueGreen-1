@@ -63,19 +63,24 @@ can do [weighted round-robin load
 balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html),
 so why is this proxy interesting?  The key reason is: using TargetServer, changing the weights of
 the targets requires a new deployment of the API Proxy. This is not always desirable or
-practical. Really I hink of the list of targets and weights as *data*, not cproxy operation
-configuration. So I Want that to be dynamnic, while the proxy remains static.
+practical. Really the list of targets and weights is *data*, not proxy operation
+configuration. So we want that to be dynamnic, while the proxy remains static.
 
 
 ## Possible Enhancements
 
 A simple enhancement would be to refresh the cache of {target, weight} tuples
-asynchronously with respect to any request.  That ought to be easy to do, using
+asynchronously with respect to any request. That ought to be easy to do, using
 Nodejs. You could use the same Weighted Random Selector object in Javascript.  Just use
 setTimeout() to refresh the cache periodically.
 
-But I think of this as a YAGNI thing. It might be nice to have, but you probably aren't
-gonna need it.
+But this may be a YAGNI thing. It might be nice to have, but you probably aren't
+gonna need it. The latency added by a synchronous, in-line lookup is single digit milliseconds.
+
+Another enhancement would be to use a Java callout to persist the
+weighted random selector object in memory. This also would be faster but
+the JS currently consumes much less than 1ms, so there's not much benefit to pushing
+that to a faster mechanism.
 
 ## License
 
@@ -90,7 +95,9 @@ loopback proxy, which responds without connecting to anything on the backend. Ra
 than demonstrate actual load balancing, which would be a little complicated, what this
 proxy does is demonstrate how to perform the weighted random selection of a target.
 
-You should think of this as just a building block.  It will compose nicely with Token verification, caching, quota enforcement, and even Shared Flows. 
+You should think of this as just a building block. It will compose
+nicely with Token verification, caching, quota enforcement, and even
+Shared Flows.
 
 
 To actually do weighted load balancing, you'd need to follow that up with:
