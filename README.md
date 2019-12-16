@@ -133,7 +133,8 @@ You should think of this as a building block.  It will compose
 nicely with Token verification, caching, quota enforcement,
 Shared Flows, etc.
 
-To actually do weighted load balancing, you'd need to follow that up with:
+To actually do weighted load balancing, you'd need to compose the weightedRandom
+selection down here with:
 
 1. Administratively setting up the various targets and weights. And adjusting them as appropriate.
 
