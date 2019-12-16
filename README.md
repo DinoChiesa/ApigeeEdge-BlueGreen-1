@@ -69,12 +69,11 @@ be detected more slowly, and the time impact to reload the cache occurs less fre
 Apigee Edge already has [a TargetServer
 construct](http://docs.apigee.com/api-services/content/load-balancing-across-backend-servers) which
 can do [weighted round-robin load
-balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html).
-
-Given that feature, why is this proxy interesting? The key reason is: using TargetServer, changing the weights of
-the targets requires a new deployment of the API Proxy. Changing the list of target servers requires a new deployment of the API Proxy. This is not always desirable or
-practical. I think of the list of targets and weights as *data*, not proxy operation
-configuration. So I want that to be dynamic, while the proxy remains static.
+balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html),
+so why is this proxy interesting?  The key reason is: using TargetServer, changing the weights of
+the targets requires a new deployment of the API Proxy. This is not always desirable or
+practical. The list of targets and weights is *data*, not proxy operation
+configuration. So we want that to be dynamic, while the proxy remains static.
 
 
 ## Using the Example
@@ -107,7 +106,8 @@ loopback proxy, which responds without connecting to anything on the backend. Ra
 than demonstrate actual load balancing, which would be a little complicated, what this
 proxy does is demonstrate how to perform the weighted random selection of a target.
 
-You should think of this as just a building block.  It will compose
+
+You should think of this as a building block.  It will compose
 nicely with Token verification, caching, quota enforcement,
 Shared Flows, etc.
 
