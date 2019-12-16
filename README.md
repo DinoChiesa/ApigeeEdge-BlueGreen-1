@@ -78,20 +78,31 @@ configuration. So we want that to be dynamic, while the proxy remains static.
 
 ## Using the Example
 
-Provision the necessary KVM, and deploy the proxy like this:
+1. Provision the necessary KVM, and import and deploy the proxy like this:
 
-```sh
-cd tools
-npm install
-ORG=myorg
-ENV=test
-node ./provision.js -v -n -o $ORG -e $ENV
-```
+   ```sh
+   cd tools
+   npm install
+   ORG=myorg
+   ENV=test
+   node ./provision.js -v -u username@example.com -o $ORG -e $ENV
+   ```
 
-Exercise the selector like this:
-```sh
-curl -i -X GET "https://$ORG-$ENV.apigee.net/bluegreen/1"
-```
+   Supply your Apigee username for the `-u` option.
+
+
+2. Then, exercise the selector like this:
+   ```sh
+   curl -i -X GET "https://$ORG-$ENV.apigee.net/bluegreen/1"
+   ```
+
+   Upon repeated invocations, you should see different values selected,
+   according to the weights you've configured.
+
+3. Update the KVM called `settings` in the Apigee UI to modify the weights for
+   the various targets, or to add value/weight pairs.  Invoke the proxy again to
+   see  the updated results.  Keep in mind the KVM cache TTL (currently 15 seconds).
+
 
 ## License
 
