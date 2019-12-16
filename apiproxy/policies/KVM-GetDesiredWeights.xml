@@ -1,7 +1,7 @@
 <KeyValueMapOperations name='KVM-GetDesiredWeights' mapIdentifier='settings'>
   <Scope>environment</Scope>
   <ExpiryTimeInSecs>15</ExpiryTimeInSecs>
-  <Get assignTo='weights' index='1'>
+  <Get assignTo='weights'>
     <Key>
       <Parameter>targets-and-weights</Parameter>
       <!--
