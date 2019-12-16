@@ -22,6 +22,16 @@ selects among them.  The list of targets and weights is cached, and periodically
 re-fetched, to allow an administrator to change those settings, and have the API Proxy
 change its routing behavior.
 
+## License
+
+This example and all its code and configuration
+is Copyright (c) 2017-2019 Google LLC, and is released under the
+Apache Source License v2.0. For information see the [LICENSE](LICENSE) file.
+
+## Disclaimer
+
+This example is not an official Google product, nor is it part of an official Google product.
+
 ## In further detail
 
 There's nothing really exotic going on here. The key pieces of the system are:
@@ -111,12 +121,6 @@ configuration. So we want that to be dynamic, while the proxy remains static.
    curl -i -X GET "https://$ORG-$ENV.apigee.net/bluegreen/1"
    ```
 
-## License
-
-This example and all its code and configuration is licensed under [the Apache 2.0 source
-license](LICENSE).
-
-
 ## Notes
 
 This proxy does not actually balance load to *any* backend systems. Instead it is a simple
@@ -136,3 +140,9 @@ To actually do weighted load balancing, you'd need to follow that up with:
 2. Adding an AssignMessage step in the target flow to set the context variable 'target.url' with the value of the dynamically-selected target URL.
 
 3. Directing client load through the system.
+
+## Author
+
+Dino Chiesa
+godino@google.com
+
