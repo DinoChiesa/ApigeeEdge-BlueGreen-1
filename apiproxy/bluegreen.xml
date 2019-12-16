@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<APIProxy revision="1" name="amadeus">
+<APIProxy revision="1" name="bluegreen">
     <ConfigurationVersion majorVersion="4" minorVersion="0"/>
     <CreatedAt>1452715334834</CreatedAt>
-    <CreatedBy>DChiesa@apigee.com</CreatedBy>
+    <CreatedBy>DChiesa@google.com</CreatedBy>
     <Description>Demonstrates routing dynamically *within* a proxy</Description>
-    <DisplayName>amadeus</DisplayName>
+    <DisplayName>bluegreen</DisplayName>
     <LastModifiedAt>1471635708649</LastModifiedAt>
-    <LastModifiedBy>DChiesa@apigee.com</LastModifiedBy>
+    <LastModifiedBy>DChiesa@google.com</LastModifiedBy>
     <Policies/>
     <ProxyEndpoints>
         <ProxyEndpoint>default</ProxyEndpoint>

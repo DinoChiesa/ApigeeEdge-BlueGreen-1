@@ -35,25 +35,9 @@
 
     <Flow name='default request'>
       <Request>
-        <!-- lookup from API BaaS -->
-        <Step><Name>CacheLookup-TargetWeights</Name></Step>
-        <Step>
-          <Name>SC-GetDesiredWeights</Name>
-          <Condition>cached_targetweights = null</Condition>
-        </Step>
-        <Step>
-          <Name>CacheInsert-TargetWeights</Name>
-          <Condition>cached_targetweights = null</Condition>
-        </Step>
-        <Step>
-          <Name>CacheLookup-TargetWeights</Name>
-          <Condition>cached_targetweights = null</Condition>
-        </Step>
 
         <!-- lookup from KVM -->
-        <!--
         <Step><Name>KVM-GetDesiredWeights</Name></Step>
-        -->
 
         <Step><Name>JS-SelectTarget</Name></Step>
       </Request>

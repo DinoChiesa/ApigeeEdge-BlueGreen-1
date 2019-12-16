@@ -1,8 +1,6 @@
 // selectTarget.js
 // ------------------------------------------------------------------
-//
-// created: Wed Jan 13 12:12:56 2016
-// last saved: <2017-April-21 15:32:53>
+/* global context, properties, WeightedRandomSelector */
 
 function selectTarget(values) {
     var wrs = new WeightedRandomSelector(values);
@@ -12,16 +10,9 @@ function selectTarget(values) {
 
 if ('' + properties.weights != "undefined") {
   // retrieve weights
-  var weightsData = context.getVariable(properties.weights);
-  weightsData = JSON.parse(weightsData);
-
-  if (weightsData.entities && weightsData.entities[0]) {
-    // obtained from BaaS
-    var entity = weightsData.entities[0];
-    selectTarget(entity.values);
-  }
-  else if (weightsData.values){
-    // obtained from KVM
-    selectTarget(weightsData);
+  var weights = context.getVariable(properties.weights);
+  weights = JSON.parse(weights);
+  if (weights.values){
+    selectTarget(weights.values);
   }
 }

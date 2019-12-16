@@ -1,35 +1,22 @@
 <AssignMessage name="AM-Response">
     <Remove>
-        <Headers>
-            <Header name="Accept"/>
-            <Header name="user-agent"/>
-            <Header name="Host"/>
-            <Header name="x-forwarded-for"/>
-            <Header name="X-Forwarded-Proto"/>
-            <Header name="X-Forwarded-Port"/>
-            <Header name="apikey"/>
-            <Header name="date"/>
-            <Header name="Authorization"/>
-            <Header name="Signature"/>
-            <Header name="X-Powered-By"/>
-        </Headers>
+        <Headers/>
     </Remove>
     <Set>
         <StatusCode>200</StatusCode>
         <ReasonPhrase>OK</ReasonPhrase>
-        <Payload contentType="application/json" variablePrefix="%" variableSuffix="#">{
+        <Payload contentType="application/json">{
   "success" : true,
-  "time" : "%system.timestamp#",
-  "developer.app.name" : "%developer.app.name#",
-  "apiproduct.name" : "%apiproduct.name#",
-  "apiproxy.name" : "%apiproxy.name#",
-  "apiproxy.revision" : "%apiproxy.revision#",
-  "environment.name" : "%environment.name#",
-  "system.uuid" : "%system.uuid#",
-  "selectedTarget" : "%selectedTarget#"
+  "time" : "{system.timestamp}",
+  "developer.app.name" : "{developer.app.name}",
+  "apiproduct.name" : "{apiproduct.name}",
+  "apiproxy.name" : "{apiproxy.name}",
+  "apiproxy.revision" : "{apiproxy.revision}",
+  "environment.name" : "{environment.name}",
+  "system.uuid" : "{system.uuid}",
+  "selectedTarget" : "{selectedTarget}"
 }
 </Payload>
     </Set>
     <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
-    <AssignTo createNew="false" transport="http" type="response"/>
 </AssignMessage>

@@ -6,6 +6,7 @@ systems, based on a weighted-random selection algorithm.
 This technique is sometimes called a "blue/green" deployment. The idea is described in
 some detail
 [here](https://cloudnative.io/blog/2015/02/the-dos-and-donts-of-bluegreen-deployment/).
+
 In brief: there is one version of the backend, the "blue" version, that is running along
 just fine, and carrying all the load.  Then, after a development cycle, there's a new
 revision of the backend system, a "green" version, that needs to get deployed. The only
@@ -17,7 +18,7 @@ on. Until eventually, the load going to green is 100% and the load to blue is 0%
 can de-commission the blue version of the server.
 
 This Apigee Edge proxy retrieves a JSON payload describing weights and targets, and then
-balances load among them.  The list of targets and weights is cached, and periodically
+selects among them.  The list of targets and weights is cached, and periodically
 re-fetched, to allow an administrator to change those settings, and have the API Proxy
 change its routing behavior.
 
@@ -45,18 +46,15 @@ There's nothing really exotic going on here. The key pieces of the system are:
   W(option)/sum(Weights) .  So for the above example, the weight for target1 is
   10/(10+65+37) = 0.089 .
 
-The proxy caches the list of tuples for 10 seconds. This means the routing behavior will
-change based on new settings, only every ten seconds.
+The proxy caches the list of tuples via the KVM GET. This means the routing behavior will
+change based on updated settings in the KVM, only after the cache expires.
 
-Why? Well think about it: you have hundreds or thousands of requests flowing through the
-system in any one second. Obviously you do not need to retrieve the weights of the
-targets, for each request. So the proxy uses a cache.
-
+This is for better performance  when you have hundreds or thousands of requests flowing through the
+system in any one second.
 
 Of course you can adjust the cache lifetime (TTL) number. The question is, how often
 will your administrators change the settings, and how quickly do the admins need those
 changes to be reflected in the actual routing behavior?
-
 
 Decreasing the TTL of the cache means the proxy will read the list more often, and will
 change its routing behavior more quickly in response to administrator changes in the
@@ -79,29 +77,22 @@ practical. I think of the list of targets and weights as *data*, not proxy opera
 configuration. So I want that to be dynamic, while the proxy remains static.
 
 
-## Possible Enhancements
+## Using the Example
 
-1. Use Java
+Provision the necessary KVM, and deploy the proxy like this:
 
-   This is a functional proof of concept. It will perform well at
-   reasonable load.  For every request, there are a few custom objects
-   created in the JavaScript callout, including the Weighted Random
-   Selector callout, which uses a Gaussian object.
+```sh
+cd tools
+npm install
+ORG=myorg
+ENV=test
+node ./provision.js -v -n -o $ORG -e $ENV
+```
 
-   This could be optimized with the caching of the WRS and the Gaussian.
-   The way to do this is via a Java callout, which can use a
-   LoadingCache from Guava which will persist and be used by multiple
-   concurrent requests.
-
-2. An additional enhancement might be to refresh the cache of {target, weight} tuples
-   asynchronously with respect to any request. Currently this proxy loads the weights data
-   synchronously with respect to a request, when the cache times out. One request will
-   incur the cost of loading. Making it asynchronous makes it fairer. 
-
-   That ought to be easy to do, using a separate proxy with a Nodejs
-   target.  But I think of this as a YAGNI thing. It might be nice to
-   have, but you probably aren't gonna need it.
-
+Exercise the selector like this:
+```sh
+curl -i -X GET "https://$ORG-$ENV.apigee.net/bluegreen/1"
+```
 
 ## License
 
@@ -111,23 +102,19 @@ license](LICENSE).
 
 ## Notes
 
-This proxy does not actually balance load to *any* backend systems. Instead it is a pure
+This proxy does not actually balance load to *any* backend systems. Instead it is a simple
 loopback proxy, which responds without connecting to anything on the backend. Rather
 than demonstrate actual load balancing, which would be a little complicated, what this
 proxy does is demonstrate how to perform the weighted random selection of a target.
 
 You should think of this as just a building block.  It will compose
-nicely with Token verification, caching, quota enforcement, and even
-Shared Flows.
-
+nicely with Token verification, caching, quota enforcement,
+Shared Flows, etc.
 
 To actually do weighted load balancing, you'd need to follow that up with:
 
-1. Administratively setting up the various targets and weights. And adjusting them as appropriate. 
+1. Administratively setting up the various targets and weights. And adjusting them as appropriate.
 
-2. Adding an AssignMessage step in the target flow to set the context variable 'target.url' with the value of the dynamically-selected target URL. 
+2. Adding an AssignMessage step in the target flow to set the context variable 'target.url' with the value of the dynamically-selected target URL.
 
 3. Directing client load through the system.
-
-
-
