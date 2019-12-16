@@ -1,4 +1,4 @@
-# Apigee Edge enables Blue/Green routing
+# Apigee enables Blue/Green routing
 
 This is an example API proxy that shoes how to distribute load to multiple back end
 systems, based on a weighted-random selection algorithm.
@@ -17,7 +17,7 @@ smoothly, then adjust the portion of load going to green a little higher.  And s
 on. Until eventually, the load going to green is 100% and the load to blue is 0%, and we
 can de-commission the blue version of the server.
 
-This Apigee Edge proxy retrieves a JSON payload describing weights and targets, and then
+This Apigee proxy retrieves a JSON payload describing weights and targets, and then
 selects among them.  The list of targets and weights is cached, and periodically
 re-fetched, to allow an administrator to change those settings, and have the API Proxy
 change its routing behavior.
@@ -66,7 +66,7 @@ be detected more slowly, and the time impact to reload the cache occurs less fre
 
 ## Why not use the TargetServer?
 
-Apigee Edge already has [a TargetServer
+Apigee already has [a TargetServer
 construct](http://docs.apigee.com/api-services/content/load-balancing-across-backend-servers) which
 can do [weighted round-robin load
 balancing](https://community.apigee.com/articles/17980/how-to-use-target-servers-in-your-api-proxies.html),
