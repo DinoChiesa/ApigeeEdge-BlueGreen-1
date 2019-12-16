@@ -21,7 +21,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// last saved: <2019-December-16 13:27:18>
+// last saved: <2019-December-16 15:05:35>
 
 const edgejs     = require('apigee-edge-js'),
       common     = edgejs.utility,
@@ -32,25 +32,43 @@ const edgejs     = require('apigee-edge-js'),
       version    = '20191216-1313',
       proxyDir   = path.resolve(__dirname, '..'),
       settingsmap = 'settings',
+      defaults = {weightoption:0},
       getopt     = new Getopt(common.commonOptions.concat([
-        ['e' , 'env=ARG', 'required. the Apigee environment to provision for this example. ']
+        ['e' , 'env=ARG', 'required. the Apigee environment to provision for this example.'],
+        ['W' , 'weightoption=ARG', 'optional. the weights option to provision. default: ' + defaults.weightoption],
+        ['L' , 'listweightoptions', 'optional. list the weight options available for this example.'],
+        ['' , 'updateweightsonly', 'optional. only update the weights. Do not import or deploy.']
       ])).bindHelp();
 
-let weights =         {
-          "values" : [ [ "AAAAA", 50 ], [ "BBBBB", 30 ], [ "CCCCC", 10 ] ]
-    };
+let weightoptions = [
+      {
+        "values" : [ [ "AAAAA", 50 ], [ "BBBBB", 30 ], [ "CCCCC", 10 ] ]
+      },
+      {
+        "values" : [ [ "XXXX", 5 ], [ "YYY", 21 ], [ "ZZZ", 13 ] ]
+      },
+      {
+        "values" : [ [ "A", 5 ], [ "B", 10 ] ]
+      }
+    ];
 
 // ========================================================
 
-function insureOneMap(org, r, mapname, encrypted) {
-  if (r.indexOf(mapname) == -1) {
-    return org.kvms.create({ environment: opt.options.env, name: mapname, encrypted})
-      .then( () => r );
-  }
-  return r;
+function insureSettingsMap(org) {
+  return Promise.resolve({})
+    .then( _ => org.kvms.get({ environment: opt.options.env }))
+    .then( r => {
+      if (r.indexOf(settingsmap) == -1) {
+        return org.kvms.create({ environment: opt.options.env, name: settingsmap, encrypted:false})
+          .then( () => r );
+      }
+      return r;
+    });
 }
 
 function storeWeights(org) {
+  let weights = weightoptions[opt.options.weightoption];
+  common.logWrite('storing: ' + JSON.stringify(weights));
   return Promise.resolve({})
     .then( _ => org.kvms.put({
         environment: opt.options.env,
@@ -62,8 +80,8 @@ function storeWeights(org) {
 
 function importAndDeploy(org) {
   return Promise.resolve({})
-    .then(_ => org.proxies.import({source:proxyDir}))
-    .then( result => org.proxies.deploy({name:result.name, revision:result.revision, environment:opt.options.env }) );
+    .then( _ => org.proxies.import({source:proxyDir}))
+    .then( r => org.proxies.deploy({name:r.name, revision:r.revision, environment:opt.options.env }) );
 }
 
 console.log(
@@ -74,20 +92,41 @@ common.logWrite('start');
 let opt = getopt.parse(process.argv.slice(2));
 common.verifyCommonRequiredParameters(opt.options, getopt);
 
+if (opt.options.listweightoptions) {
+  for(var ix in weightoptions) {
+    console.log(ix + ':');
+    console.log(JSON.stringify(weightoptions[ix]));
+    console.log();
+  }
+  process.exit(1);
+}
+
 if ( ! opt.options.env) {
   console.log('you must specify an environment.');
   getopt.showHelp();
   process.exit(1);
 }
 
+if (opt.options.weightoption) {
+  opt.options.weightoption = Number(opt.options.weightoption);
+  if (opt.options.weightoption < 0 || opt.options.weightoption >= weightoptions.length) {
+    console.log('you must specify a valid weightoption.');
+    getopt.showHelp();
+    process.exit(1);
+  }
+}
+else {
+  opt.options.weightoption = defaults.weightoption;
+}
+
 apigeeEdge.connect(common.optToOptions(opt))
   .then( org =>
          Promise.resolve({})
-         .then( _ => org.kvms.get({ environment: opt.options.env }))
-         .then( r => insureOneMap(org, r, settingsmap, false))
+         .then( _ => insureSettingsMap(org))
          .then( _ => storeWeights(org))
-         .then( _ => importAndDeploy(org))
+         .then( _ => opt.options.updateweightsonly || importAndDeploy(org) )
          .then( _ => {
+           console.log();
            console.log('curl -i -X GET "https://$ORG-$ENV.apigee.net/bluegreen/1"');
            console.log();
          }))

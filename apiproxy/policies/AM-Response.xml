@@ -2,14 +2,20 @@
     <Remove>
         <Headers/>
     </Remove>
+  <AssignVariable>
+    <Name>timeFormatString1</Name>
+    <Value>yyyyMMdd HH:mm:ss.SSS</Value> <!-- EEEE -->
+  </AssignVariable>
+    <AssignVariable>
+      <Name>mytime</Name>
+      <Template>{timeFormatUTCMs(timeFormatString1,system.timestamp)}</Template>
+    </AssignVariable>
     <Set>
         <StatusCode>200</StatusCode>
         <ReasonPhrase>OK</ReasonPhrase>
         <Payload contentType="application/json">{
   "success" : true,
-  "time" : "{system.timestamp}",
-  "developer.app.name" : "{developer.app.name}",
-  "apiproduct.name" : "{apiproduct.name}",
+  "time" : "{mytime}",
   "apiproxy.name" : "{apiproxy.name}",
   "apiproxy.revision" : "{apiproxy.revision}",
   "environment.name" : "{environment.name}",

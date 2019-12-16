@@ -99,10 +99,17 @@ configuration. So we want that to be dynamic, while the proxy remains static.
    Upon repeated invocations, you should see different values selected,
    according to the weights you've configured.
 
-3. Update the KVM called `settings` in the Apigee UI to modify the weights for
-   the various targets, or to add value/weight pairs.  Invoke the proxy again to
-   see  the updated results.  Keep in mind the KVM cache TTL (currently 15 seconds).
+3. Update the KVM called `settings` in the Apigee UI, or using the provisioning tool, to modify the weights for
+   the various targets, or to add value/weight pairs.
+   ```
+   node ./provision.js -v -u username@example.com -o $ORG -e $ENV -W 1 --updateweightsonly
+   ```
 
+4. Invoke the proxy again to
+   see  the updated results.  Keep in mind the KVM cache TTL (currently 15 seconds).
+   ```sh
+   curl -i -X GET "https://$ORG-$ENV.apigee.net/bluegreen/1"
+   ```
 
 ## License
 
