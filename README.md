@@ -128,7 +128,6 @@ loopback proxy, which responds without connecting to anything on the backend. Ra
 than demonstrate actual load balancing, which would be a little complicated, what this
 proxy does is demonstrate how to perform the weighted random selection of a target.
 
-
 You should think of this as a building block.  It will compose
 nicely with Token verification, caching, quota enforcement,
 Shared Flows, etc.

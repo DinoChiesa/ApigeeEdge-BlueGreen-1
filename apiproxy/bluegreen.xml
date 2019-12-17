@@ -3,7 +3,7 @@
     <ConfigurationVersion majorVersion="4" minorVersion="0"/>
     <CreatedAt>1452715334834</CreatedAt>
     <CreatedBy>DChiesa@google.com</CreatedBy>
-    <Description>Demonstrates routing dynamically *within* a proxy</Description>
+    <Description>Demonstrates routing dynamically *within* a proxy. Seehttps://github.com/DinoChiesa/ApigeeEdge-BlueGreen-1</Description>
     <DisplayName>bluegreen</DisplayName>
     <LastModifiedAt>1471635708649</LastModifiedAt>
     <LastModifiedBy>DChiesa@google.com</LastModifiedBy>
