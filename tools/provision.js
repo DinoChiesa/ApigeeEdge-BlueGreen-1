@@ -21,7 +21,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// last saved: <2019-December-16 15:05:35>
+// last saved: <2019-December-17 19:36:42>
 
 const edgejs     = require('apigee-edge-js'),
       common     = edgejs.utility,
@@ -127,7 +127,7 @@ apigeeEdge.connect(common.optToOptions(opt))
          .then( _ => opt.options.updateweightsonly || importAndDeploy(org) )
          .then( _ => {
            console.log();
-           console.log('curl -i -X GET "https://$ORG-$ENV.apigee.net/bluegreen/1"');
+           console.log('curl -i -X GET https://$ORG-$ENV.apigee.net/bluegreen/1');
            console.log();
          }))
 
