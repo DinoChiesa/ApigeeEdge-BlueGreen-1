@@ -21,7 +21,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// last saved: <2019-December-17 19:36:42>
+// last saved: <2019-December-17 19:39:03>
 
 const edgejs     = require('apigee-edge-js'),
       common     = edgejs.utility,
@@ -42,13 +42,16 @@ const edgejs     = require('apigee-edge-js'),
 
 let weightoptions = [
       {
-        "values" : [ [ "AAAAA", 50 ], [ "BBBBB", 30 ], [ "CCCCC", 10 ] ]
+        "values" : [ [ "Target-A", 50 ]  ]
       },
       {
-        "values" : [ [ "XXXX", 5 ], [ "YYY", 21 ], [ "ZZZ", 13 ] ]
+        "values" : [ [ "Target-A", 50 ], [ "Target-B", 10 ] ]
       },
       {
-        "values" : [ [ "A", 5 ], [ "B", 10 ] ]
+        "values" : [ [ "Target-A", 50 ], [ "Target-B", 50 ], [ "Target-C", 10 ] ]
+      },
+      {
+        "values" : [ [ "Target-A", 50 ], [ "Target-B", 50 ], [ "Target-C", 50 ], [ "Target-D", 10 ] ]
       }
     ];
 
